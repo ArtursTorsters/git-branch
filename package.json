@@ -4,7 +4,8 @@
   "description": "",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.83.0"
+    "vscode": "^1.76.2"
+    
   },
   "categories": [
     "Other"
