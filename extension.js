@@ -3,30 +3,42 @@ const vscode = require('vscode');
  * @param {vscode.ExtensionContext} context
  */
 
-function activate(context) {
+const activate = (context) => {
 
-	// branch switch detection command
-	vscode.commands.registerCommand('switchBranch', () => {
+		let disposable = vscode.commands.registerCommand('git-branch.helloWorld', function() {
+
+		const simpleGit = require('simple-git')
+		let previousBranch = null
+
+	const detectBranchChange = () => {
+			simpleGit().branchLocal((error, summary) => {
+				if (error) {
+					console.error('branch err', error)
+				} else {
+					const currentBranch = summary.current
+					if(currentBranch){
+						console.log('CURRENT BRANCH', currentBranch )
+					}
+					if (currentBranch !== previousBranch) {
+						console.log('Branch changed to:', currentBranch)
+						// trigger
+						previousBranch = currentBranch
+					}
+				}
+			})
+		}
+	
+		//  check every 5s for branch change
+		setInterval(detectBranchChange, 5000)
+
+
+		vscode.window.showInformationMessage('EXTENSION')
 
 
 	})
-	
 
 
-
-	console.log('Congratulations, your extension "git-branch" is now active!');
-
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with  registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('git-branch.helloWorld', function () {
-		// The code you place here will be executed every time your command is executed
-
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from git branch!');
-	});
-
-	context.subscriptions.push(disposable);
+	context.subscriptions.push(disposable)
 }
 
 // This method is called when your extension is deactivated
