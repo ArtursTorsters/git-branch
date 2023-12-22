@@ -1,19 +1,25 @@
-const vscode = require('vscode');
+const vscode = require('vscode')
+const simpleGit = require('simple-git')
+
 /**
  * @param {vscode.ExtensionContext} context
  */
 
 const activate = (context) => {
-
+	const git = simpleGit('../../../../../Users/admin/Desktop/code/git-branch')
+    console.log('Extension activated!')
 		let disposable = vscode.commands.registerCommand('git-branch.helloWorld', function() {
-
-		const simpleGit = require('simple-git')
 		let previousBranch = null
-
+w
 	const detectBranchChange = () => {
-			simpleGit().branchLocal((error, summary) => {
+		console.log('current dir', process.cwd())
+
+				git.branchLocal((error, summary) => {
 				if (error) {
-					console.error('branch err', error)
+				console.log('current dir', process.cwd())
+					console.error('ERRRRRROR', error)
+					console.log('current dir', process.cwd())
+
 				} else {
 					const currentBranch = summary.current
 					if(currentBranch){
@@ -27,21 +33,24 @@ const activate = (context) => {
 				}
 			})
 		}
-	
-		//  check every 5s for branch change
-		setInterval(detectBranchChange, 5000)
+		detectBranchChange()
 
+		//  check every 1min for branch change
+		const interval = () => {
+			const timer = 120;
+			console.log("CALLED")
+			setInterval(detectBranchChange, timer * 1000);
+		}
+		interval()
 
 		vscode.window.showInformationMessage('EXTENSION')
-
-
 	})
 
 
 	context.subscriptions.push(disposable)
 }
 
-// This method is called when your extension is deactivated
+// This is called when extension is deactivated
 function deactivate() {
 return null
 
