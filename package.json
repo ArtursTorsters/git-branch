@@ -36,5 +36,9 @@
   },
   "dependencies": {
     "simple-git": "^3.20.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ArtursTorsters/git-branch"
   }
 }

@@ -6,27 +6,25 @@ const simpleGit = require('simple-git')
  */
 
 const activate = (context) => {
-	const git = simpleGit('../../../../../Users/admin/Desktop/code/git-branch')
-    console.log('Extension activated!')
+	//  get path using simple-git
+	const git = simpleGit(vscode.workspace.rootPath)
 		let disposable = vscode.commands.registerCommand('git-branch.helloWorld', function() {
 		let previousBranch = null
-w
-	const detectBranchChange = () => {
-		console.log('current dir', process.cwd())
 
-				git.branchLocal((error, summary) => {
+	const detectBranchChange = () => {
+		git.branchLocal((error, summary) => {
+		const currentBranch = summary && summary.current
+
 				if (error) {
-				console.log('current dir', process.cwd())
-					console.error('ERRRRRROR', error)
+					console.error('ERROR', error)
 					console.log('current dir', process.cwd())
 
 				} else {
-					const currentBranch = summary.current
 					if(currentBranch){
-						console.log('CURRENT BRANCH', currentBranch )
+						console.log('CURRENT BRANCH:', currentBranch )
 					}
 					if (currentBranch !== previousBranch) {
-						console.log('Branch changed to:', currentBranch)
+						console.log('BRANCH CHANGED TO:', currentBranch)
 						// trigger
 						previousBranch = currentBranch
 					}
@@ -35,11 +33,11 @@ w
 		}
 		detectBranchChange()
 
-		//  check every 1min for branch change
+		//  check for branch change
 		const interval = () => {
-			const timer = 120;
+			const timer = 10
 			console.log("CALLED")
-			setInterval(detectBranchChange, timer * 1000);
+			setInterval(detectBranchChange, timer * 1000)
 		}
 		interval()
 
@@ -48,6 +46,22 @@ w
 
 
 	context.subscriptions.push(disposable)
+
+	const arrayFiles = []
+    //  onDidOpenTextDocument event
+    const openDisposable = vscode.workspace.onDidOpenTextDocument((document) => {
+        console.log(`FILE OPENED: ${document.fileName}`)
+    })
+
+    //  onDidCloseTextDocument event
+    const closeDisposable = vscode.workspace.onDidCloseTextDocument((document) => {
+        console.log(`FILE CLOSED: ${document.fileName}`)
+    })
+
+    // Add disposables
+    context.subscriptions.push(openDisposable, closeDisposable)
+
+
 }
 
 // This is called when extension is deactivated
