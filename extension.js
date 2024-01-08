@@ -1,8 +1,8 @@
-const vscode = require('vscode');
-const simpleGit = require('simple-git');
+const vscode = require('vscode')
+const simpleGit = require('simple-git')
 
 // Store the OPENED files in an object
-const branchFiles = {};
+const branchFiles = {}
 
 
 /**
@@ -10,85 +10,79 @@ const branchFiles = {};
  */
 const activate = (context) => {
   // Dynamic path using simple-git
-  const git = simpleGit(vscode.workspace.rootPath);
+  const git = simpleGit(vscode.workspace.rootPath)
 
   // Keep track of the currently opened files
-  let openedFiles = [];
+  let openedFiles = []
 
   let disposable = vscode.commands.registerCommand('git-branch.helloWorld', async function() {
-    let previousBranch = null;
+    let previousBranch = null
 
     // Detect branch
     const detectBranchChange = async () => {
-      const summary = await git.branchLocal();
-      const currentBranch = summary.current;
+      const summary = await git.branchLocal()
+      const currentBranch = summary.current
 
       if (currentBranch) {
-        console.log('CURRENT BRANCH:', currentBranch);
+        console.log('CURRENT BRANCH:', currentBranch)
 
         // Store files for the current branch
-        branchFiles[currentBranch] = openedFiles;
+        branchFiles[currentBranch] = openedFiles
 
         // Log or perform any other actions based on your requirements
-        console.log('FILES FOR THIS BRANCH:', branchFiles[currentBranch]);
+        console.log('FILES FOR THIS BRANCH:', branchFiles[currentBranch])
 
         // Notify the user when a branch change occurs
         if (currentBranch !== previousBranch) {
-          vscode.window.showInformationMessage(`Branch changed to: ${currentBranch}`);
+          vscode.window.showInformationMessage(`Branch changed to: ${currentBranch}`)
 
      // Close files from the previous branch
         openedFiles.forEach(async (filePath) => {
-          const document = await vscode.workspace.openTextDocument(filePath);
-          const editor = await vscode.window.showTextDocument(document);
-
+          const document = await vscode.workspace.openTextDocument(filePath)
+          const editor = await vscode.window.showTextDocument(document)
+          editor.hide()
           // Close the editor
-          await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
-
+          await vscode.commands.executeCommand('workbench.action.closeActiveEditor')
         })
-
-
           // Update the currently opened files
-          openedFiles = branchFiles[currentBranch];
+          openedFiles = branchFiles[currentBranch]
 
           // Trigger
-          previousBranch = currentBranch;
+          previousBranch = currentBranch
         }
       }
-    };
+    }
 
-    detectBranchChange();
+    detectBranchChange()
 
     // interval
     const interval = () => {
-      const timer = 3;
-      setInterval(detectBranchChange, timer * 1000);
-    };
-    interval();
+      const timer = 3
+      setInterval(detectBranchChange, timer * 1000)
+    }
+    interval()
 
-    vscode.window.showInformationMessage('EXTENSION ACTIVE');
-  });
-
+    vscode.window.showInformationMessage('EXTENSION ACTIVE')
+  })
   // Subscribe to the onDidOpenTextDocument event
   const openDisposable = vscode.workspace.onDidOpenTextDocument((document) => {
-    openedFiles.push(document.fileName);
-    console.log(`FILE OPENED: ${document.fileName}`);
-  });
-
+    openedFiles.push(document.fileName)
+    console.log(`FILE OPENED: ${document.fileName}`)
+  })
   // Subscribe to the onDidCloseTextDocument event
   const closeDisposable = vscode.workspace.onDidCloseTextDocument((document) => {
     // Handle file close event if needed
-    console.log(`FILE CLOSED: ${document.fileName}`);
-  });
-
+    console.log(`FILE CLOSED: ${document.fileName}`)
+  })
   // Add disposables to the context subscriptions
-  context.subscriptions.push(disposable, openDisposable, closeDisposable);
-};
+  context.subscriptions.push(disposable, openDisposable, closeDisposable)
+}
 
 function deactivate() {
-  return null;
+  return null
 }
 
 module.exports = {
   activate,
   deactivate,
-};
+}
