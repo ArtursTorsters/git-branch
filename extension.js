@@ -4,7 +4,6 @@ const simpleGit = require('simple-git');
 // Store the OPENED files in an object
 const branchFiles = {};
 
-console.log("branchfiles", branchFiles)
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -35,7 +34,6 @@ const activate = (context) => {
 
         // Notify the user when a branch change occurs
         if (currentBranch !== previousBranch) {
-          console.log('BRANCH CHANGED TO:', currentBranch);
           vscode.window.showInformationMessage(`Branch changed to: ${currentBranch}`);
 
           // Close files from the previous branch
@@ -61,9 +59,9 @@ const activate = (context) => {
 
     detectBranchChange();
 
-    // Check for branch change at regular intervals
+    // interval
     const interval = () => {
-      const timer = 20;
+      const timer = 10;
       setInterval(detectBranchChange, timer * 1000);
     };
     interval();
