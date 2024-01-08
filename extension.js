@@ -60,7 +60,7 @@ const activate = (context) => {
 
     // interval
     const interval = () => {
-      const timer = 10;
+      const timer = 3;
       setInterval(detectBranchChange, timer * 1000);
     };
     interval();
