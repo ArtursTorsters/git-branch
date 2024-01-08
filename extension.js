@@ -37,16 +37,15 @@ const activate = (context) => {
           vscode.window.showInformationMessage(`Branch changed to: ${currentBranch}`)
 
      // Close files from the previous branch
-        openedFiles.forEach(async (filePath) => {
-          if (filePath.endsWith('.d.ts')) {
-            return
-          }
-          const document = await vscode.workspace.openTextDocument(filePath)
-          const editor = await vscode.window.showTextDocument(document)
-          editor.hide()
-          // Close the editor
-          await vscode.commands.executeCommand('workbench.action.closeActiveEditor')
-        })
+    //   need to close files that were not opened in the the current branch
+    vscode.workspace.textDocuments.forEach(async (document) => {
+      const filePath = document.fileName;
+    
+      if (!openedFiles.includes(filePath) && !filePath.endsWith('.d.ts')) {
+        // Close the document
+        await vscode.commands.executeCommand('vscode.close', document.uri);
+      }
+    });
           // Update the currently opened files
           openedFiles = branchFiles[currentBranch]
 
