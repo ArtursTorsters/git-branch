@@ -65,17 +65,17 @@ const activate = (context) => {
     vscode.window.showInformationMessage('EXTENSION ACTIVE')
   })
   // Subscribe to the onDidOpenTextDocument event
-  const openDisposable = vscode.workspace.onDidOpenTextDocument((document) => {
-    openedFiles.push(document.fileName)
-    console.log(`FILE OPENED: ${document.fileName}`)
-  })
-  // Subscribe to the onDidCloseTextDocument event
-  const closeDisposable = vscode.workspace.onDidCloseTextDocument((document) => {
-    // Handle file close event if needed
-    console.log(`FILE CLOSED: ${document.fileName}`)
-  })
-  // Add disposables to the context subscriptions
-  context.subscriptions.push(disposable, openDisposable, closeDisposable)
+  // const openDisposable = vscode.workspace.onDidOpenTextDocument((document) => {
+  //   openedFiles.push(document.fileName)
+  //   console.log(`FILE OPENED: ${document.fileName}`)
+  // })
+  // // Subscribe to the onDidCloseTextDocument event
+  // const closeDisposable = vscode.workspace.onDidCloseTextDocument((document) => {
+  //   // Handle file close event if needed
+  //   console.log(`FILE CLOSED: ${document.fileName}`)
+  // })
+  // // Add disposables to the context subscriptions
+  // context.subscriptions.push(disposable, openDisposable, closeDisposable)
 }
 
 function deactivate() {
