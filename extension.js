@@ -36,17 +36,16 @@ const activate = (context) => {
         if (currentBranch !== previousBranch) {
           vscode.window.showInformationMessage(`Branch changed to: ${currentBranch}`);
 
-          // Close files from the previous branch
-          openedFiles.forEach(async (filePath) => {
-            const document = await vscode.workspace.openTextDocument(filePath);
-            vscode.window.showTextDocument(document);
-          });
+     // Close files from the previous branch
+        openedFiles.forEach(async (filePath) => {
+          const document = await vscode.workspace.openTextDocument(filePath);
+          const editor = await vscode.window.showTextDocument(document);
 
-          // Open files for the current branch
-          branchFiles[currentBranch].forEach(async (filePath) => {
-            const document = await vscode.workspace.openTextDocument(filePath);
-            vscode.window.showTextDocument(document);
-          });
+          // Close the editor
+          await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+
+        })
+
 
           // Update the currently opened files
           openedFiles = branchFiles[currentBranch];
