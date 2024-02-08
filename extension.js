@@ -66,25 +66,38 @@ const activate = (context) => {
     vscode.window.showInformationMessage('EXTENSION ACTIVE');
   });
 
-  // Subscribe to the onDidChangeActiveTextEditor event
-  const editorDisposable = vscode.window.onDidChangeActiveTextEditor(editor => {
-    if (editor) {
-      // Track the opened file for the current branch
-      const currentBranch = getCurrentBranch();
-      if (currentBranch) {
-        branchFiles[currentBranch].push(editor.document.fileName);
+// Subscribe to the onDidChangeActiveTextEditor event
+const editorDisposable = vscode.window.onDidChangeActiveTextEditor(editor => {
+  if (editor) {
+    // Track the opened file for the current branch
+    const currentBranch = getCurrentBranch();
+    if (currentBranch) {
+      // Check if the file is already in the array before adding it
+      const filePath = editor.document.fileName;
+      if (!branchFiles[currentBranch].includes(filePath)) {
+        branchFiles[currentBranch].push(filePath);
       }
     }
-  });
+  }
+});
 
-  // Subscribe to the onDidCloseTextDocument event
-  const closeDisposable = vscode.workspace.onDidCloseTextDocument((document) => {
-    // Handle file close event if needed
-    console.log(`FILE CLOSED: ${document.fileName}`);
-  });
+// Subscribe to the onDidCloseTextDocument event
+const closeDisposable = vscode.workspace.onDidCloseTextDocument(document => {
+  // Handle file close event if needed
+  const currentBranch = getCurrentBranch();
+  if (currentBranch) {
+    // Remove the closed file from the array
+    branchFiles[currentBranch] = branchFiles[currentBranch].filter(filePath => filePath !== document.fileName);
+  }
+});
 
-  // Add disposables to the context subscriptions
-  context.subscriptions.push(disposable, editorDisposable, closeDisposable);
+// Add disposables to the context subscriptions
+context.subscriptions.push(disposable, editorDisposable, closeDisposable);
+
+
+
+
+
 }
 
 // Close files that were opened in the previous branch but not in the current branch.
