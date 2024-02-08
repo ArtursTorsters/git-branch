@@ -45,8 +45,8 @@ const activate = (context) => {
           await closeFilesNotInBranch(previousBranch, currentBranch);
 
           // Update the currently opened files for the current branch
-          branchFiles[currentBranch] = vscode.workspace.textDocuments.map(document => document.fileName);
-
+          branchFiles[currentBranch] = getOpenedFiles();
+          
           // Trigger
           previousBranch = currentBranch;
         }
@@ -58,7 +58,7 @@ const activate = (context) => {
 
     // Set up interval for periodic branch change detection
     const interval = () => {
-      const timer = 3;
+      const timer = 10;
       setInterval(detectBranchChange, timer * 1000);
     };
     interval();
@@ -66,23 +66,25 @@ const activate = (context) => {
     vscode.window.showInformationMessage('EXTENSION ACTIVE');
   });
 
-  // Subscribe to the onDidOpenTextDocument event
-  const openDisposable = vscode.workspace.onDidOpenTextDocument((document) => {
-    // Track the opened file for the current branch
-    const currentBranch = getCurrentBranch();
-    if (currentBranch) {
-      branchFiles[currentBranch].push(document.fileName);
+  // Subscribe to the onDidChangeActiveTextEditor event
+  const editorDisposable = vscode.window.onDidChangeActiveTextEditor(editor => {
+    if (editor) {
+      // Track the opened file for the current branch
+      const currentBranch = getCurrentBranch();
+      if (currentBranch) {
+        branchFiles[currentBranch].push(editor.document.fileName);
+      }
     }
   });
 
   // Subscribe to the onDidCloseTextDocument event
   const closeDisposable = vscode.workspace.onDidCloseTextDocument((document) => {
     // Handle file close event if needed
-    console.log(`FILE CLOSED: ${document.fileName}`)
+    console.log(`FILE CLOSED: ${document.fileName}`);
   });
 
   // Add disposables to the context subscriptions
-  context.subscriptions.push(disposable, openDisposable, closeDisposable)
+  context.subscriptions.push(disposable, editorDisposable, closeDisposable);
 }
 
 // Close files that were opened in the previous branch but not in the current branch.
@@ -91,10 +93,10 @@ async function closeFilesNotInBranch(previousBranch, currentBranch) {
     const filesToClose = branchFiles[previousBranch].filter(filePath => !branchFiles[currentBranch].includes(filePath));
 
     for (const filePath of filesToClose) {
-      const document = vscode.workspace.textDocuments.find(doc => doc.fileName === filePath)
+      const document = vscode.workspace.textDocuments.find(doc => doc.fileName === filePath);
       if (document) {
-        await vscode.window.showTextDocument(document)
-        await vscode.commands.executeCommand('workbench.action.closeActiveEditor')
+        await vscode.window.showTextDocument(document);
+        await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
       }
     }
   }
@@ -102,15 +104,21 @@ async function closeFilesNotInBranch(previousBranch, currentBranch) {
 
 // Get the current branch synchronously.
 function getCurrentBranch() {
-  const git = simpleGit(vscode.workspace.rootPath)
-  const summary = git.branchLocalSync()
-  return summary.current
+  const git = simpleGit(vscode.workspace.rootPath);
+  const summary = git.branchLocalSync();
+  return summary.current;
 }
+
+// Get the currently opened files.
+function getOpenedFiles() {
+  return vscode.window.visibleTextEditors.map(editor => editor.document.fileName);
+}
+
 function deactivate() {
-  return null
+  return null;
 }
 
 module.exports = {
   activate,
   deactivate,
-}
+};
