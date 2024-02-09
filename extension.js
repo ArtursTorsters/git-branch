@@ -2,6 +2,7 @@ const vscode = require('vscode');
 const simpleGit = require('simple-git');
 
 const branchFiles = {};
+let lastOpenedBranch = null;
 
 function activate(context) {
   const branches = [];
@@ -15,7 +16,19 @@ function activate(context) {
           branches.push(currentBranch);
           branchFiles[currentBranch] = [];
         }
+
+        // Check if the branch has changed
+        if (currentBranch !== vscode.workspace.getConfiguration().get('git-branch.currentBranch')) {
+          vscode.workspace.getConfiguration().update('git-branch.currentBranch', currentBranch, vscode.ConfigurationTarget.Workspace);
+        }
+
         console.log('FILES FOR THIS BRANCH:', branchFiles[currentBranch]);
+
+        // Reopen files only when the branch has changed from the last opened branch
+        if (lastOpenedBranch !== currentBranch) {
+          reopenFilesForBranch(currentBranch);
+          lastOpenedBranch = currentBranch; // Update the last opened branch
+        }
       }
     };
 
@@ -68,6 +81,22 @@ function getCurrentBranchSync() {
   const git = simpleGit(vscode.workspace.workspaceFolders[0].uri.fsPath);
   const summary = git.branchLocalSync();
   return summary.current;
+}
+
+function reopenFilesForBranch(branch) {
+  const filesToOpen = branchFiles[branch];
+  if (filesToOpen) {
+    filesToOpen.forEach(filePath => {
+      vscode.workspace.openTextDocument(vscode.Uri.file(filePath)).then(
+        doc => {
+          vscode.window.showTextDocument(doc, { preview: false });
+        },
+        error => {
+          console.error(`Error opening file: ${filePath}`, error);
+        }
+      );
+    });
+  }
 }
 
 function deactivate() {
