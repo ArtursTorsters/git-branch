@@ -42,14 +42,20 @@ function activate(context) {
     }
   });
 
-  const closeDisposable = vscode.workspace.onDidCloseTextDocument(document => {
-    const currentBranch = getCurrentBranchSync();
-    if (currentBranch) {
-      branchFiles[currentBranch] = branchFiles[currentBranch].filter(filePath => filePath !== document.fileName);
-    }
+  const visibleEditorsDisposable = vscode.window.onDidChangeVisibleTextEditors(editors => {
+    // Update tracking based on currently visible editors
+    editors.forEach(editor => {
+      const currentBranch = getCurrentBranchSync();
+      if (currentBranch) {
+        const filePath = editor.document.fileName;
+        if (!branchFiles[currentBranch].includes(filePath)) {
+          branchFiles[currentBranch].push(filePath);
+        }
+      }
+    });
   });
 
-  context.subscriptions.push(disposable, editorDisposable, closeDisposable);
+  context.subscriptions.push(disposable, editorDisposable, visibleEditorsDisposable);
 }
 
 async function getCurrentBranch() {
