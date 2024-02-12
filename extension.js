@@ -38,7 +38,7 @@ function activate(context) {
     detectBranchChange()
 
     const interval = () => {
-      const timer = 3
+      const timer = 2
       setInterval(detectBranchChange, timer * 1000)
     }
     interval()
