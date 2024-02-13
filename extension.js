@@ -2,8 +2,7 @@ const vscode = require('vscode')
 const simpleGit = require('simple-git')
 
 // store files
-const branchFiles = {}
-
+const branchFiles = []
 // track the last opened branch
 let lastOpenedBranch = null
 
@@ -117,7 +116,13 @@ const reopenFilesForBranch = (branch) => {
       )
     }
   })
+
+  console.log("TO OPEN", filesToOpen)
+
 }
+
+
+
 //  deactivate the extension
 const deactivate = () => {
   return null
