@@ -116,9 +116,6 @@ const reopenFilesForBranch = (branch) => {
       )
     }
   })
-
-  console.log("TO OPEN", filesToOpen)
-
 }
 
 
