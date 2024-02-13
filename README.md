@@ -2,12 +2,11 @@
 
 ## Overview
 
-This Visual Studio Code extension is designed to help developers keep track of their associated files. It provides a convenient way to reopen files that were previously opened when working on a specific branch.
+This Visual Studio Code extension is designed to help keep track of associated files. It provides a convenient way to reopen files that were previously opened when working on a specific branch.
 
 ## Features
 
 - Automatically detects and associates open files with the current Git branch.
-- Simplifies branch-related file management within Visual Studio Code.
 
 ## Installation
 
@@ -20,6 +19,18 @@ This Visual Studio Code extension is designed to help developers keep track of t
 
 - Files opened in Visual Studio Code are automatically associated with the active Git branch.
 - Easily switch between branches to access the files specific to each branch.
+
+## Example Scenario
+
+1. **Current Branch: Feature A**
+   - Open files X and Y.
+   - Switch to a different branch, e.g., Main, and close files X and Y.
+
+2. **Return to Feature A:**
+   - Switch back to the Feature A branch.
+   - Files X and Y will be reopened automatically.
+
+
 
 ## License
 
