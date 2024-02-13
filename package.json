@@ -9,13 +9,19 @@
   "categories": [
     "Other"
   ],
+  "configuration": {
+    "git-branch.currentBranch": {
+      "type": "string",
+      "default": ""
+    }
+  },
   "activationEvents": [],
   "main": "./extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "git-branch.helloWorld",
-        "title": "Hello World"
+        "command": "git-branch.Branch",
+        "title": "Branch"
       }
     ]
   },
@@ -35,7 +41,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "simple-git": "^3.20.0"
+    "simple-git": "^3.22.0"
   },
   "repository": {
     "type": "git",

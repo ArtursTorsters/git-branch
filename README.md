@@ -2,7 +2,7 @@
 
 ## Overview
 
-Git Branch File Tracker is a Visual Studio Code extension that automatically tracks and associates files with the currently active Git branch.
+This Visual Studio Code extension is designed to help developers keep track of their associated files. It provides a convenient way to reopen files that were previously opened when working on a specific branch.
 
 ## Features
 

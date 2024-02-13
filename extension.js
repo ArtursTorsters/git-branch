@@ -7,31 +7,31 @@ const branchFiles = {}
 // Variable to track the last opened branch
 let lastOpenedBranch = null
 
-function activate(context) {
-  // Array to store known branches
+const activate = (context) => {
   const branches = []
 
-  let disposable = vscode.commands.registerCommand('git-branch.helloWorld', async function () {
-    // Function to detect branch changes
+  let disposable = vscode.commands.registerCommand('git-branch.Branch', async function () {
     const detectBranchChange = async () => {
-      // Get the current branch
-      const currentBranch = await getCurrentBranch()
-      if (currentBranch) {
-        // If the branch is not in the list, add it and initialize its file tracking
-        if (!branches.includes(currentBranch)) {
-          branches.push(currentBranch)
-          branchFiles[currentBranch] = []
-        }
+      try {
+        const currentBranch = await getCurrentBranch()
+        if (currentBranch) {
+          if (!branches.includes(currentBranch)) {
+            branches.push(currentBranch)
+            branchFiles[currentBranch] = []
+          }
 
-        // Check if the branch has changed
-        if (currentBranch !== vscode.workspace.getConfiguration().get('git-branch.currentBranch')) {
-          vscode.workspace.getConfiguration().update('git-branch.currentBranch', currentBranch, vscode.ConfigurationTarget.Workspace)
+          if (currentBranch !== vscode.workspace.getConfiguration().get('git-branch.currentBranch')) {
+            vscode.workspace.getConfiguration().update('git-branch.currentBranch', currentBranch, vscode.ConfigurationTarget.Workspace)
+          }
+
+          if (lastOpenedBranch !== currentBranch) {
+            console.log(`Branch changed from ${lastOpenedBranch} to ${currentBranch}`)
+            reopenFilesForBranch(currentBranch)
+            lastOpenedBranch = currentBranch
+          }
         }
-        // Reopen files only when the branch has changed from the last opened branch
-        if (lastOpenedBranch !== currentBranch) {
-          reopenFilesForBranch(currentBranch)
-          lastOpenedBranch = currentBranch
-        }
+      } catch (error) {
+        console.error('Error detecting branch change:', error)
       }
     }
 
@@ -42,38 +42,47 @@ function activate(context) {
       setInterval(detectBranchChange, timer * 1000)
     }
     interval()
-    vscode.window.showInformationMessage('Extension to track branches and files is active!')
+    console.log('Extension to track branches and files is active!')
   })
 
   const editorDisposable = vscode.window.onDidChangeActiveTextEditor(async editor => {
-    if (editor) {
-      // Get the current branch
-      const currentBranch = await getCurrentBranch()
-      if (currentBranch) {
-        const filePath = editor.document.fileName
-        // Track the file for the current branch
-        if (!branchFiles[currentBranch].includes(filePath)) {
-          branchFiles[currentBranch].push(filePath)
+    try {
+      if (editor) {
+        const currentBranch = await getCurrentBranch()
+        if (currentBranch) {
+          const filePath = editor.document.fileName
+          if (!branchFiles[currentBranch].includes(filePath)) {
+            console.log(`Tracking file ${filePath} for branch ${currentBranch}`)
+            branchFiles[currentBranch].push(filePath)
+          }
         }
       }
+    } catch (error) {
+      console.error('Error handling active text editor change:', error)
     }
   })
-  // Event listener for changes in the visible text editors
+
   const visibleEditorsDisposable = vscode.window.onDidChangeVisibleTextEditors(editors => {
-    // Update tracking based on currently visible editors
     editors.forEach(editor => {
-      const currentBranch = getCurrentBranchSync()
-      if (currentBranch) {
-        const filePath = editor.document.fileName
-        if (!branchFiles[currentBranch].includes(filePath)) {
-          branchFiles[currentBranch].push(filePath)
+      try {
+        const currentBranch = getCurrentBranchSync()
+        if (currentBranch) {
+          const filePath = editor.document.fileName
+          if (!branchFiles[currentBranch].includes(filePath)) {
+            console.log(`Tracking file ${filePath} for branch ${currentBranch}`)
+            branchFiles[currentBranch].push(filePath)
+          }
         }
+      } catch (error) {
+        console.error('Error handling visible text editors change:', error)
       }
     })
   })
-  // Add the event listeners to the context subscriptions
+
   context.subscriptions.push(disposable, editorDisposable, visibleEditorsDisposable)
 }
+
+
 
 // Function to get the current branch asynchronously
 async function getCurrentBranch() {
@@ -85,7 +94,7 @@ async function getCurrentBranch() {
 // Function to get the current branch synchronously
 function getCurrentBranchSync() {
   const git = simpleGit(vscode.workspace.workspaceFolders[0].uri.fsPath)
-  const summary = git.branchLocalSync()
+  const summary = git.branchLocal()
   return summary.current
 }
 
@@ -99,7 +108,7 @@ function reopenFilesForBranch(branch) {
 
       // Reopen the file only if it's not currently open
       if (!isOpen) {
-        vscode.workspace.openTextDocument(vscode.Uri.file(filePath)).then(
+        vscode.workspace.openTextDocument(vscode.Uri.parse(filePath)).then(
           doc => {
             vscode.window.showTextDocument(doc, { preview: false })
           },
