@@ -1,10 +1,8 @@
 const vscode = require('vscode')
 const simpleGit = require('simple-git')
 
-// Dictionary to store files opened in each branch
+// store files opened in each branch
 const branchFiles = {}
-
-// Variable to track the last opened branch
 let lastOpenedBranch = null
 
 const activate = (context) => {
@@ -31,18 +29,18 @@ const activate = (context) => {
           }
         }
       } catch (error) {
-        console.error('Error detecting branch change:', error)
+        console.error(error)
       }
     }
 
     detectBranchChange()
 
     const interval = () => {
-      const timer = 2
+      const timer = 3
       setInterval(detectBranchChange, timer * 1000)
     }
     interval()
-    console.log('Extension to track branches and files is active!')
+    console.log('Extension to track files is active!')
   })
 
   const editorDisposable = vscode.window.onDidChangeActiveTextEditor(async editor => {
@@ -58,7 +56,7 @@ const activate = (context) => {
         }
       }
     } catch (error) {
-      console.error('Error handling active text editor change:', error)
+      console.error(error)
     }
   })
 
@@ -74,7 +72,7 @@ const activate = (context) => {
           }
         }
       } catch (error) {
-        console.error('Error handling visible text editors change:', error)
+        console.error(error)
       }
     })
   })
@@ -84,26 +82,26 @@ const activate = (context) => {
 
 
 
-// Function to get the current branch asynchronously
+// get the current branch asynchronously
 async function getCurrentBranch() {
   const git = simpleGit(vscode.workspace.workspaceFolders[0].uri.fsPath)
   const summary = await git.branchLocal()
   return summary.current
 }
 
-// Function to get the current branch synchronously
+// get the current branch synchronously
 function getCurrentBranchSync() {
   const git = simpleGit(vscode.workspace.workspaceFolders[0].uri.fsPath)
   const summary = git.branchLocal()
   return summary.current
 }
 
-// Function to reopen files for a given branch
+//  reopen files for a given branch
 function reopenFilesForBranch(branch) {
   const filesToOpen = branchFiles[branch]
   if (filesToOpen) {
     filesToOpen.forEach(filePath => {
-      // Check if the file is currently open in any editor
+      // if the file is currently open in any editor
       const isOpen = vscode.workspace.textDocuments.some(doc => doc.fileName === filePath)
 
       // Reopen the file only if it's not currently open
@@ -120,7 +118,7 @@ function reopenFilesForBranch(branch) {
     })
   }
 }
-// Function to deactivate the extension
+// deactivate the extension
 function deactivate() {
   return null
 }

@@ -21,7 +21,7 @@
     "commands": [
       {
         "command": "git-branch.Branch",
-        "title": "Branch"
+        "title": "Git Branch File Tracker"
       }
     ]
   },
