@@ -75,19 +75,19 @@ vscode.window.showInformationMessage('Extension to track files is active!')
   context.subscriptions.push(editorDisposable, visibleEditorsDisposable)
 }
 
-async function getCurrentBranch() {
+ const getCurrentBranch = async () => {
   const git = simpleGit(vscode.workspace.workspaceFolders[0].uri.fsPath)
   const summary = await git.branchLocal()
   return summary.current
 }
 
-function getCurrentBranchSync() {
+const getCurrentBranchSync = () => {
   const git = simpleGit(vscode.workspace.workspaceFolders[0].uri.fsPath)
   const summary = git.branchLocal()
   return summary.current
 }
 
-function reopenFilesForBranch(branch) {
+const reopenFilesForBranch = (branch) => {
   const filesToOpen = branchFiles[branch] || []
   filesToOpen.forEach(filePath => {
     const isOpen = vscode.workspace.textDocuments.some(doc => doc.fileName === filePath)
@@ -100,7 +100,7 @@ function reopenFilesForBranch(branch) {
   })
 }
 
-function deactivate() {
+const deactivate = () => {
   return null
 }
 
