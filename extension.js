@@ -37,7 +37,7 @@ const activate = (context) => {
 
   // Check branch after an interval
   const interval = () => {
-    const timer = 3000; // 3 seconds
+    const timer = 2000; // 3 seconds
     console.log(`Setting branch check interval to ${timer / 1000} seconds`);
     setInterval(detectBranchChange, timer);
   };
