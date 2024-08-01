@@ -1,7 +1,7 @@
 {
   "name": "git-branch",
-  "displayName": "git branch",
-  "description": "",
+  "displayName": "Git Branch",
+  "description": "Tracks files by branch and reopens them when switching branches.",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.83.0"
@@ -9,13 +9,9 @@
   "categories": [
     "Other"
   ],
-  "configuration": {
-    "git-branch.currentBranch": {
-      "type": "string",
-      "default": ""
-    }
-  },
-  "activationEvents": [],
+  "activationEvents": [
+    "onCommand:git-branch.Branch"
+  ],
   "main": "./extension.js",
   "contributes": {
     "commands": [
@@ -23,7 +19,18 @@
         "command": "git-branch.Branch",
         "title": "Git Branch File Tracker"
       }
-    ]
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Git Branch Configuration",
+      "properties": {
+        "git-branch.currentBranch": {
+          "type": "string",
+          "default": "",
+          "description": "The current branch being tracked by the git-branch extension."
+        }
+      }
+    }
   },
   "scripts": {
     "lint": "eslint .",
@@ -41,7 +48,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "simple-git": "^3.22.0"
+    "simple-git": "^3.25.0"
   },
   "repository": {
     "type": "git",
