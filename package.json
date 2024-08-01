@@ -10,6 +10,9 @@
     "Other"
   ],
   "activationEvents": [
+    "onStartupFinished",
+    "onDidChangeConfiguration",
+    "onFileSystem:",
     "onCommand:git-branch.Branch"
   ],
   "main": "./extension.js",
