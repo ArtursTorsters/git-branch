@@ -1,7 +1,7 @@
 {
   "name": "git-branch",
-  "displayName": "Git Branch",
-  "description": "A VS Code extension to track and manage Git branches.",
+  "displayName": "git branch",
+  "description": "",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.83.0"
@@ -9,12 +9,13 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "onStartupFinished",
-    "onDidChangeConfiguration",
-    "onFileSystem:",
-    "onCommand:git-branch.Branch"
-  ],
+  "configuration": {
+    "git-branch.currentBranch": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "activationEvents": [],
   "main": "./extension.js",
   "contributes": {
     "commands": [
@@ -22,18 +23,7 @@
         "command": "git-branch.Branch",
         "title": "Git Branch File Tracker"
       }
-    ],
-    "configuration": {
-      "type": "object",
-      "title": "Git Branch Configuration",
-      "properties": {
-        "git-branch.currentBranch": {
-          "type": "string",
-          "default": "",
-          "description": "The current Git branch being tracked by the extension."
-        }
-      }
-    }
+    ]
   },
   "scripts": {
     "lint": "eslint .",
@@ -51,7 +41,7 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "simple-git": "^3.25.0"
+    "simple-git": "^3.22.0"
   },
   "repository": {
     "type": "git",

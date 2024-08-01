@@ -19,6 +19,7 @@ This Visual Studio Code extension is designed to help keep track of associated f
 
 - Files opened in Visual Studio Code are automatically associated with the active Git branch.
 - Easily switch between branches to access the files specific to each branch.
+- Press Ctrl+Shift+P to open the command palette and choose Git Branch File Tracker
 
 ## Example Scenario
 
